@@ -1,6 +1,12 @@
-## Current Skills & Learning Progress
+# SOC-Lab
 
-### Networking
+My cybersecurity learning portfolio focused on developing SOC Analyst skills.
+
+This repository documents my learning process, security exercises and practical labs related to Security Operations Center (SOC) work.
+
+## Skills & Learning Progress
+
+## Networking
 
 Currently learning and practicing:
 
@@ -11,30 +17,41 @@ Currently learning and practicing:
 - Basic network traffic analysis
 
 
-### Operating Systems
+## Operating Systems
 
-Linux:
-- Learning Linux administration and security basics
-- Practicing command line usage
-- Learning log locations and system monitoring
+### Linux
 
-Windows:
-- Learning Windows fundamentals
-- Exploring Windows security concepts and logs
+Learning:
+
+- Linux administration and security basics
+- Command line usage
+- System monitoring
+- Log locations and analysis
 
 
-### SIEM
+### Windows
+
+Learning:
+
+- Windows fundamentals
+- Windows security concepts
+- Windows Event Logs
+
+
+## SIEM
 
 Currently learning:
 
 - What SIEM systems are
 - How security alerts work
 - How SOC analysts investigate events
+- Basic alert analysis workflow
 
-Practical SIEM experience: planned
+Practical SIEM experience:
+- Planned
 
 
-### Log Analysis
+## Log Analysis
 
 Basic experience with:
 
@@ -42,10 +59,10 @@ Basic experience with:
 - Understanding authentication events
 - Searching for suspicious activity
 
-Continuing to improve log analysis skills.
+Continuing to improve log analysis skills through practical exercises.
 
 
-### Incident Response
+## Incident Response
 
 Currently learning:
 
@@ -53,7 +70,23 @@ Currently learning:
 - Security incident documentation
 - Investigation methodology
 
-Practical incident response labs: planned
+Practical incident response labs:
+- Planned
+
+
+## Home Lab Environment
+
+Operating Systems:
+
+- Ubuntu Linux
+- Kali Linux
+
+Tools:
+
+- Wireshark
+- Nmap
+- Git/GitHub
+- Wazuh (planned)
 
 
 ## Learning Platforms & Practice
@@ -63,7 +96,26 @@ Practical incident response labs: planned
 - Kali Linux
 - GitHub documentation
 
+
+## Planned Practical Labs
+
+The next steps in my learning path:
+
+- Wazuh SIEM home lab
+- Linux log investigation exercises
+- Windows Event Log analysis
+- Network traffic analysis with Wireshark
+- Incident response case studies
+
+
 ## Current Goal
 
 Build the knowledge and practical skills required for a Junior SOC Analyst position.
 
+Focus areas:
+
+- Understanding security events
+- Learning log analysis
+- Practicing alert investigation
+- Improving networking and system security knowledge
+- Building hands-on cybersecurity experience
