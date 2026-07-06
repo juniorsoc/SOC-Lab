@@ -1,26 +1,68 @@
 # SOC-Lab
 
-My cybersecurity learning portfolio focused on Security Operations Center (SOC) skills.
+My cybersecurity learning portfolio focused on developing SOC Analyst skills.
 
-## Topics
+This repository documents my journey learning security monitoring, log analysis, network security and incident response.
 
-- Linux security
-- Log analysis
-- Network analysis
-- Incident response
-- Cloud security basics
+## Skills & Topics
 
-## Environment
+### Linux Security
+- Linux commands
+- System logs analysis
+- Authentication logs
+- Basic security monitoring
 
+### Networking
+- TCP/IP fundamentals
+- Network protocols
+- Ports and services
+- Network traffic analysis
+
+### SIEM
+- SIEM fundamentals
+- Alert analysis
+- Security event investigation
+- Log monitoring concepts
+
+### Incident Response
+- Incident documentation
+- Investigation process
+- Indicators of Compromise (IoC)
+- Security reports
+
+### Cloud Security Basics
+- Cloud security concepts
+- AWS security fundamentals
+
+
+## Home Lab Environment
+
+Operating systems:
 - Ubuntu Linux
 - Kali Linux
-- Networking labs
-- Security tools
 
-## Goals
+Tools:
+- Wireshark
+- Nmap
+- Wazuh
+- Git/GitHub
 
-Build practical SOC analyst skills:
-- analyze logs
-- detect suspicious activity
-- understand network traffic
-- document security incidents
+
+## Current Goals
+
+Building practical SOC Analyst skills:
+
+- Analyze security logs
+- Investigate suspicious activity
+- Understand network traffic
+- Create incident reports
+- Practice security monitoring
+
+
+## Learning Approach
+
+This repository contains:
+- notes from learning
+- security exercises
+- analysis examples
+- incident response documentation
