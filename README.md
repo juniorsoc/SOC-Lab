@@ -1,68 +1,69 @@
-# SOC-Lab
-
-My cybersecurity learning portfolio focused on developing SOC Analyst skills.
-
-This repository documents my journey learning security monitoring, log analysis, network security and incident response.
-
-## Skills & Topics
-
-### Linux Security
-- Linux commands
-- System logs analysis
-- Authentication logs
-- Basic security monitoring
+## Current Skills & Learning Progress
 
 ### Networking
-- TCP/IP fundamentals
-- Network protocols
-- Ports and services
-- Network traffic analysis
+
+Currently learning and practicing:
+
+- TCP/IP fundamentals (basic understanding, practiced on TryHackMe)
+- Routing basics (introductory knowledge)
+- DNS fundamentals (practiced on TryHackMe)
+- Network protocols and ports
+- Basic network traffic analysis
+
+
+### Operating Systems
+
+Linux:
+- Learning Linux administration and security basics
+- Practicing command line usage
+- Learning log locations and system monitoring
+
+Windows:
+- Learning Windows fundamentals
+- Exploring Windows security concepts and logs
+
 
 ### SIEM
-- SIEM fundamentals
-- Alert analysis
-- Security event investigation
-- Log monitoring concepts
+
+Currently learning:
+
+- What SIEM systems are
+- How security alerts work
+- How SOC analysts investigate events
+
+Practical SIEM experience: planned
+
+
+### Log Analysis
+
+Basic experience with:
+
+- Reading system logs
+- Understanding authentication events
+- Searching for suspicious activity
+
+Continuing to improve log analysis skills.
+
 
 ### Incident Response
-- Incident documentation
-- Investigation process
-- Indicators of Compromise (IoC)
-- Security reports
 
-### Cloud Security Basics
-- Cloud security concepts
-- AWS security fundamentals
+Currently learning:
+
+- Incident response process
+- Security incident documentation
+- Investigation methodology
+
+Practical incident response labs: planned
 
 
-## Home Lab Environment
+## Learning Platforms & Practice
 
-Operating systems:
-- Ubuntu Linux
+- TryHackMe
+- Ubuntu Home Lab
 - Kali Linux
+- GitHub documentation
 
-Tools:
-- Wireshark
-- Nmap
-- Wazuh
-- Git/GitHub
+## Current Goal
 
+Build the knowledge and practical skills required for a Junior SOC Analyst position.
 
-## Current Goals
-
-Building practical SOC Analyst skills:
-
-- Analyze security logs
-- Investigate suspicious activity
-- Understand network traffic
-- Create incident reports
-- Practice security monitoring
-
-
-## Learning Approach
-
-This repository contains:
-- notes from learning
-- security exercises
-- analysis examples
-- incident response documentation
