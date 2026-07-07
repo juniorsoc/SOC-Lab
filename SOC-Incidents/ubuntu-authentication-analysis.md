@@ -11,49 +11,57 @@ Ubuntu Linux
 
 Log Source:
 
-`/var/log/auth.log`
+/var/log/auth.log
 
 Tools Used:
+
 - grep
 - awk
 - sort
 - uniq
 
 
-## Investigation Steps
+# Investigation Steps
 
 ## 1. Authentication Failure Analysis
 
 Command used:
 
-```bash
-grep -i "failed" /var/log/auth.log
-
+    grep -i "failed" /var/log/auth.log
 
 Finding:
 
 Observed failed password verification attempts for local user:
-unix_chkpwd: password check failed for user (onfroy)
 
+    unix_chkpwd: password check failed for user (onfroy)
 
-Analysis:The events indicate unsuccessful password verification.
+Analysis:
+
+The events indicate unsuccessful password verification.
 
 No indicators of brute force activity were identified.
 
-Observed:no source IP address
-no SSH authentication attempts
-no repeated login attempts in a short time period
+Observed:
 
-2. Successful Session Analysis
+- No source IP address
+- No SSH authentication attempts
+- No repeated login attempts in a short time period
 
-Command used:grep -i "session opened" /var/log/auth.log
 
-Finding:Detected sessions related to:
+## 2. Successful Session Analysis
 
-local user login
-sudo privilege elevation
-system services
-cron tasks
+Command used:
+
+    grep -i "session opened" /var/log/auth.log
+
+Finding:
+
+Detected sessions related to:
+
+- Local user login
+- Sudo privilege elevation
+- System services
+- Cron tasks
 
 Analysis:
 
@@ -61,34 +69,47 @@ The activity was consistent with normal local system administration.
 
 No unauthorized remote sessions were identified.
 
-3. Privileged Command Analysis
 
-Command used:grep "COMMAND=" /var/log/auth.log
-Observed commands:apt update
-apt install github-desktop
-apt install nmap
-apt install tcpdump
-apt install git
+## 3. Privileged Command Analysis
+
+Command used:
+
+    grep "COMMAND=" /var/log/auth.log
+
+Finding:
+
+Observed commands:
+
+    apt update
+    apt install github-desktop
+    apt install nmap
+    apt install tcpdump
+    apt install git
+
 Analysis:
 
 Commands were executed through sudo by the local user.
 
 Activity matched:
 
-system configuration
-software installation
-security lab preparation
-Indicators of Compromise
+- System configuration
+- Software installation
+- Security lab preparation
 
-No IOC identified.
+
+# Indicators of Compromise
+
+No Indicators of Compromise (IOC) identified.
 
 Not observed:
 
-SSH brute force
-unauthorized remote access
-suspicious privilege escalation
-suspicious binaries
-Conclusion
+- SSH brute force
+- Unauthorized remote access
+- Suspicious privilege escalation
+- Suspicious binaries
+
+
+# Conclusion
 
 Based on the available authentication logs, no indicators of compromise were identified.
 
