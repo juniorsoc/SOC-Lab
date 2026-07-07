@@ -1,9 +1,5 @@
-# Cloud Computing — SOC Essentials
+# Cloud Computing — What a SOC Analyst Needs to Know
 
-| Model | Meaning | Example |
-|---|---|---|
-| IaaS | Rent servers, manage everything else | AWS EC2 |
-| PaaS | Ready-made platform, focus on the app | Google App Engine |
-| SaaS | Fully built software via browser | Gmail, Zoom |
+Cloud services are generally organized into three broad service models, each shifting a different amount of operational responsibility from the customer to the provider. Infrastructure as a Service provides raw computing resources — servers, storage, networking — while leaving the customer responsible for managing everything running on top of that infrastructure. Platform as a Service provides a more complete, ready-to-use environment, allowing the customer to focus primarily on their own application rather than the underlying infrastructure supporting it. Software as a Service delivers a fully built application, typically accessed directly through a browser, with essentially no infrastructure management required from the customer at all.
 
-Cloud logs differ from on-prem (e.g. AWS CloudTrail, Azure Monitor) — SOC analysts need to know these exist and generate their own data to analyze.
+From a SOC perspective, cloud environments introduce their own distinct logging ecosystems that differ meaningfully from traditional on-premises infrastructure. Each major cloud provider offers its own native logging and monitoring service, generating activity records in its own particular format and covering a different set of events than what an on-premises system would typically produce. As organizations increasingly run infrastructure across a mix of on-premises systems and one or more cloud providers, recognizing that these cloud-native logs exist, understanding broadly what they capture, and knowing that they require their own dedicated analysis is an increasingly essential part of the SOC analyst skill set, even before diving into the specifics of any one provider's tooling.

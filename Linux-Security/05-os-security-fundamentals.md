@@ -1,7 +1,7 @@
-# OS as the Foundation of Security
+# The Operating System as the Foundation of Security
 
-Four core mechanisms:
-- **Authentication** — verifies identity (password, biometrics). Many failed logins = brute-force sign.
-- **Permissions** — controls what users/apps can do. Privilege escalation is a classic attack vector.
-- **Isolation** — keeps programs in separate "boxes" so one crash doesn't take down the system.
-- **System protection** — blocks modification of critical files (e.g. read-only flags).
+Security tools such as antivirus software and firewalls are often thought of as the primary line of defense, but they're better understood as additional protections layered on top of security mechanisms the operating system itself provides from the moment it starts running, well before any third-party tool is even active.
+
+Authentication is the mechanism by which the operating system verifies a user's identity before granting access to the system at all, and a pattern of repeated failed authentication attempts is a classic indicator of an attempted brute-force attack. Permissions govern what actions each user and application is actually allowed to perform once authenticated, and privilege escalation — an attacker gaining access beyond what their initial foothold should permit — remains one of the most common paths from an initial compromise to full control of a system. Isolation keeps individual programs contained within their own boundaries, so that a fault or compromise in one application doesn't automatically extend to the rest of the system. System protection mechanisms prevent modification of critical files, making it significantly harder for malicious software to tamper with the core components a system depends on to function correctly.
+
+Together, these four mechanisms form the baseline that every other security control builds upon — without them functioning correctly at the operating system level, no amount of additional tooling layered on top can fully compensate.

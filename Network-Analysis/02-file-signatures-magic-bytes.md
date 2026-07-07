@@ -1,13 +1,7 @@
 # File Signatures — Magic Bytes
 
-| Hex | Type |
-|---|---|
-| `4D 5A` | .EXE — most important to catch in SOC work |
-| `FF D8 FF` | .JPG |
-| `89 50 4E 47` | .PNG |
-| `25 50 44 46` | .PDF |
-| `50 4B 03 04` | .ZIP |
+A file's extension is simply a naming convention and carries no inherent guarantee about what the file actually contains — an attacker can freely rename a malicious executable to appear as an ordinary image or document. The file's true type, however, is embedded in its actual content, in the form of a short sequence of bytes at the very beginning of the file known as its magic bytes or file signature, which identifies the format regardless of whatever extension has been applied to it.
 
-**Why it matters:** a renamed `.exe` disguised as `photo.jpg` is caught by checking the actual hex signature, not the extension.
+Certain signatures recur often enough to be worth recognizing on sight. A signature beginning with `4D 5A` identifies a Windows executable, and encountering this signature on a file claiming to be something else — an image, a document — is one of the most significant red flags a SOC analyst can encounter, since it indicates a deliberate attempt to disguise executable code. Signatures such as `FF D8 FF` and `89 50 4E 47` correspond to standard image formats, and files bearing these signatures alongside unexpected extensions warrant closer inspection to rule out a payload hidden within what otherwise appears to be an ordinary image. Similarly, `25 50 44 46` identifies a PDF document, and `50 4B 03 04` identifies a ZIP archive, both of which are common vectors for delivering malicious content disguised as an innocuous attachment.
 
-**Tools:** `file` (identifies real type), `xxd` (hex dump), CyberChef (online decoder).
+Several tools support this kind of inspection directly. On Linux, a dedicated command identifies a file's actual type by examining its magic bytes rather than trusting its extension, while another displays a file's raw contents as a hexadecimal dump for manual inspection. Online tools such as CyberChef provide a broader set of decoding and analysis capabilities for examining suspicious content in more depth.

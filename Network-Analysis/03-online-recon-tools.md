@@ -1,9 +1,7 @@
-# Online Recon and Analysis Tools
+# Online Tools for Reconnaissance and Analysis
 
-| Tool | Use |
-|---|---|
-| Shodan | Find exposed devices/open ports on the internet |
-| VirusTotal | Scan files/URLs/hashes against multiple AV engines |
-| NVD | Official CVE database with CVSS scores |
-| Exploit-DB | Proof-of-concept exploit code |
-| GitHub | Scanners and CVE analyses (verify code before running — some PoCs are unreliable or malicious) |
+A number of publicly available tools support the reconnaissance and investigative work a SOC analyst regularly performs, each serving a distinct purpose within that workflow.
+
+Shodan functions as a search engine for internet-connected devices, indexing open ports and running services across publicly reachable systems, which makes it valuable for identifying whether an organization has inadvertently exposed something to the internet that shouldn't be reachable from outside. VirusTotal accepts files, URLs, and file hashes and checks them simultaneously against a large number of independent antivirus engines, providing a quick way to assess whether a given piece of content is broadly recognized as malicious rather than relying on the judgment of any single detection engine. The National Vulnerability Database serves as the authoritative source for CVE records and their associated CVSS scores, providing the definitive reference point when researching a specific known vulnerability. Exploit-DB maintains a repository of proof-of-concept exploit code, which is useful for understanding whether a working exploit exists for a given vulnerability and helps inform how urgently it should be remediated. GitHub hosts a wide range of security-related scanners, tools, and CVE analyses, often published and updated faster than official channels can keep pace with.
+
+Working with proof-of-concept code found online, particularly on GitHub, calls for a degree of caution: not every published exploit is complete or reliable, some contain intentional flaws, and in rare cases a repository itself may be crafted maliciously. Reviewing code carefully before execution, and avoiding running unfamiliar scripts in a production environment, is a standard precaution when working with this kind of material.

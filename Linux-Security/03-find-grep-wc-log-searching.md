@@ -1,17 +1,9 @@
-# find, grep, wc — Searching Logs
+# find, grep, and wc — Searching Through Logs
 
-```bash
-find -name "*.txt"                          # find files by name/pattern
-grep "IP_ADDRESS" access.log                # search for a term
-grep -c "term" access.log                   # count matches
-grep -n "term" access.log                   # show line numbers
-grep -R "term" /etc/                        # recursive search
-wc -l access.log                            # count lines/entries
-```
+The `find` command locates files across the filesystem based on their name or other attributes, which is useful both for locating a specific known file and for searching more broadly using pattern matching when the exact filename isn't known.
 
-**access.log format:** `IP - - [timestamp] "METHOD /path HTTP/1.1" status size`
+The `grep` command searches within file contents for a given pattern and offers several useful modifiers. It can restrict output to only the portion of each line that actually matched, rather than the whole line. It can report a simple count of matching lines instead of the matches themselves, which is useful for quickly gauging the scale of something without reviewing every individual entry. It can prefix each match with the line number it was found on, which helps when cross-referencing findings against the original file. And it can search recursively through every file within a directory structure, rather than being limited to a single file.
 
-**SOC use:** a high count of `404` from one IP = directory brute-forcing/scanning:
-```bash
-grep "IP_ADDRESS" access.log | grep " 404 " | wc -l
-```
+The `wc` command, when used with its line-counting option, reports the total number of lines in a file, which for a log file typically corresponds directly to the number of recorded entries — a quick way to gauge the overall volume of activity captured.
+
+A typical web server access log entry records several pieces of information in a consistent structure: the IP address of the client making the request, a timestamp indicating when the request occurred, the HTTP method and path that was requested, the status code returned by the server, and the size of the response. Reviewing these fields in combination is often more informative than looking at any single field in isolation — for instance, correlating a specific IP address against a concentration of error status codes can reveal patterns of scanning or probing behavior that wouldn't be obvious from the raw log alone.
