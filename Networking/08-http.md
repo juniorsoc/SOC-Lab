@@ -35,3 +35,27 @@ Request headers carry information from the client to the server. Beyond the User
 Response headers carry information back from the server to the client. The Set-Cookie header instructs the browser to store a new cookie value. The Cache-Control header dictates how long, if at all, the browser should retain a cached copy of the response. The Content-Type header describes the nature of the returned content, and Content-Encoding specifies what compression, if any, was applied before transmission.
 
 Reviewing headers during an investigation can surface a range of anomalies: a User-Agent identifying a scripting library rather than a genuine browser, a missing Host header where one would normally be expected, an unexpected or duplicated Cookie value suggestive of a stolen session, or a Content-Type that doesn't match the actual nature of the file being transferred.
+
+## Practical Example — Inspecting a Raw HTTP Exchange
+
+```bash
+$ curl -v http://example.com/login
+> GET /login HTTP/1.1
+> Host: example.com
+> User-Agent: curl/8.4.0
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Server: nginx/1.18.0
+< Content-Type: text/html
+< Set-Cookie: session_id=a1f9c3...; HttpOnly
+```
+
+```bash
+$ grep " 404 " access.log | awk '{print $1}' | sort | uniq -c | sort -rn | head -3
+    342 203.0.113.44
+      8 198.51.100.7
+      2 192.0.2.15
+```
+
+The second command counts 404 responses per IP and sorts by frequency — 342 not-found requests from a single IP in a short window is a strong signal of directory/endpoint brute-forcing, and is exactly the kind of query a SOC analyst runs when triaging a busy access log.

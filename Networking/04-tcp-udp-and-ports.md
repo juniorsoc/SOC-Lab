@@ -23,3 +23,19 @@ A UDP datagram carries a comparable but reduced set of headers relative to TCP �
 A port is a numerical value between 0 and 65535 that identifies a specific application or service on a device, allowing a single device to run many different network services simultaneously, each reachable through its own distinct port. Ports in the range 0 through 1024 are reserved as well-known ports, allocated to the most common and widely used protocols and services.
 
 Services can technically be configured to run on non-standard ports rather than their default, but doing so means clients must explicitly specify that port when connecting, since automatic discovery assumes the standard port is in use. Services found running on unusual or non-standard ports are worth additional scrutiny, since this is sometimes used as a simple technique to evade automated scanning tools that only check well-known ports by default.
+
+## Practical Example — Checking Open Ports and Active Connections
+
+```bash
+$ sudo nmap -sV 192.168.1.10
+PORT     STATE SERVICE VERSION
+22/tcp   open  ssh     OpenSSH 8.9p1
+80/tcp   open  http    nginx 1.18.0
+443/tcp  open  https   nginx 1.18.0
+3389/tcp open  ms-wbt-server  ← unexpected on a Linux web server
+
+$ netstat -antp | grep ESTABLISHED
+tcp   0   0 192.168.1.10:443   203.0.113.44:51322   ESTABLISHED  1421/nginx
+```
+
+The `nmap` scan reveals which services are actually listening and their versions — outdated versions here are a starting point for checking against known CVEs. Port 3389 (RDP) appearing on what should be a Linux web server is exactly the kind of anomaly worth flagging immediately. The `netstat` output shows a currently active connection, useful for confirming who is actively talking to a server right now.

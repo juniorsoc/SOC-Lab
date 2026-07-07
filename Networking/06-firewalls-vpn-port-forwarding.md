@@ -23,3 +23,16 @@ A VPN establishes an encrypted tunnel between devices communicating over the int
 VPNs serve several distinct purposes. They allow geographically distributed offices to access the same internal company resources as though everyone were on a single local network. They provide privacy by encrypting traffic so that only the sender and intended recipient can read it, which is particularly valuable on untrusted or public networks. And they can provide a degree of anonymity by hiding browsing activity from an internet service provider — though this protection only holds if the VPN provider itself doesn't log the traffic passing through it.
 
 Several underlying technologies are commonly used to build VPN connections. PPP provides the foundational layer of authentication and encryption but cannot, on its own, route traffic beyond a local link. PPTP extends PPP to support routing across the wider internet and is relatively simple to configure, though it relies on encryption that is considered weak by modern standards. IPSec encrypts traffic on top of the existing IP protocol, offering considerably stronger encryption at the cost of more complex configuration.
+
+## Practical Example — Reviewing Firewall Rules
+
+```bash
+$ sudo iptables -L -n -v
+Chain INPUT (policy DROP)
+target   prot opt source           destination         
+ACCEPT   tcp  --  0.0.0.0/0        0.0.0.0/0    tcp dpt:22
+ACCEPT   tcp  --  0.0.0.0/0        0.0.0.0/0    tcp dpt:443
+DROP     tcp  --  203.0.113.44     0.0.0.0/0    tcp dpt:22
+```
+
+This ruleset shows a default-deny policy (`DROP`) with explicit allow rules for SSH (22) and HTTPS (443), plus a specific block rule against one IP attempting SSH — likely added after that IP was observed brute-forcing login attempts. Reading rulesets like this top-to-bottom, since firewall rules are evaluated in order, is a core SOC skill when auditing whether a system is configured as intended.

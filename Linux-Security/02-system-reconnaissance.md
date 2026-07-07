@@ -9,3 +9,21 @@ Files and directories whose names begin with a dot are hidden by default and won
 When searching across the filesystem for a specific file, it's common to encounter permission errors for directories the current user isn't allowed to access. These errors can be suppressed so that only genuine results are displayed, which keeps the output focused and readable rather than cluttered with noise from inaccessible locations.
 
 A typical reconnaissance sequence on an unfamiliar system proceeds roughly in this order: establish identity and privilege level, gather system and kernel details, check available disk space, confirm the specific distribution in use, and finally review commonly abused locations such as temporary directories for anything suspicious.
+
+## Practical Example — Full Recon Sequence
+
+```bash
+$ whoami && uname -a && df -h && cat /etc/os-release
+ubuntu
+Linux tryhackme 6.2.0-39-generic #40-Ubuntu x86_64 GNU/Linux
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/xvda1       20G   14G  5.2G  73% /
+PRETTY_NAME="Ubuntu 22.04.3 LTS"
+
+$ ls -al /tmp/
+drwxrwxrwt  4 root   root   4096 Jul  7 09:12 .
+drwxr-xr-x 5 ubuntu ubuntu 4096 Jul  7 08:40 .research
+-rwxr-xr-x 1 root   root  45232 Jul  7 03:14 .hidden_backdoor
+```
+
+Running the four recon commands chained together gives a fast snapshot of the system. The `/tmp/` listing then reveals two hidden items a plain `ls` would have missed entirely — a `.research` folder and a suspiciously named executable, `.hidden_backdoor`, both invisible without the `-a` flag.

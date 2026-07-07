@@ -9,3 +9,15 @@ Integrity ensures that data cannot be modified without proper authorization, and
 Availability ensures that data and services remain accessible to authorized users precisely when they need them, and even brief periods of unavailability can carry serious financial and operational consequences depending on what's affected. A violation of availability manifests as an outage, whether caused deliberately through a denial-of-service attack or as a side effect of something like ransomware rendering systems unusable. Defenses against availability violations include load balancing to distribute demand, regular backups to allow recovery, content delivery networks to absorb traffic surges, and rate limiting to prevent any single source from overwhelming a system. Investigating a potential availability violation centers on monitoring uptime and identifying the cause of any disruption to normal service.
 
 Taken together, these three questions — was data exposed, was data changed, was a service unavailable — form the mental checklist a SOC analyst applies to essentially every incident under review, providing a consistent structure for reasoning about what actually happened and how serious it is.
+
+## Practical Example — Classifying an Incident Against the Triad
+
+```bash
+$ grep "203.0.113.44" access.log | grep "/export/customer_data" | wc -l
+1
+
+$ grep "203.0.113.44" access.log | tail -1
+203.0.113.44 - - [07/Jul/2026:02:14:33] "GET /export/customer_data.csv HTTP/1.1" 200 8482291
+```
+
+A single successful (`200`) request pulling an 8MB customer data export, from an IP not associated with any known internal system, is a clear **confidentiality violation** — unauthorized data exfiltration — rather than an integrity or availability issue. Framing the finding this way in an incident report (*"This is a confidentiality breach, not a system outage"*) is exactly the kind of classification a triage write-up is expected to make explicit.

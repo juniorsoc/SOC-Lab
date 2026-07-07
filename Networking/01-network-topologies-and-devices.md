@@ -35,3 +35,16 @@ Devices assigned to different VLANs on the same switch can each retain access to
 A router operates at Layer 3 of the OSI model and typically exposes a configuration interface through which an administrator sets rules such as port forwarding or firewall policies. Routing itself is a process, carried out with the help of routing protocols such as OSPF or RIP, which determine the optimal path for data between networks based on factors like hop count, path reliability, and the speed of the underlying medium.
 
 A switch operates by forwarding Ethernet frames — encapsulated IP packets — based on MAC addresses. There is an important distinction between switch types: a Layer 2 switch forwards purely by MAC address and cannot route between separate IP networks, while a Layer 3 switch can also forward based on IP addressing and handle multiple networks simultaneously, effectively absorbing part of a router's function.
+
+## Practical Example — Viewing the Local MAC Address Table
+
+On a Linux system, the ARP/neighbor table shows the MAC-to-IP mappings the machine has already learned for devices on its local network segment:
+
+```bash
+$ ip neigh show
+192.168.1.1     dev eth0 lladdr aa:bb:cc:11:22:33 REACHABLE
+192.168.1.15    dev eth0 lladdr aa:bb:cc:44:55:66 STALE
+192.168.1.254   dev eth0 lladdr aa:bb:cc:77:88:99 REACHABLE
+```
+
+`REACHABLE` means the entry was recently confirmed; `STALE` means it hasn't been re-verified recently but is still cached. Reviewing this table is a quick first step when investigating unfamiliar devices on a local segment — an unrecognized MAC address showing up here means a new device joined the network.

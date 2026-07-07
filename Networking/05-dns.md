@@ -11,3 +11,19 @@ Resolving a domain name into an IP address follows a chain of lookups that only 
 If neither the local device nor the ISP's resolver has a cached answer, the query proceeds to a root DNS server, which doesn't hold the final answer itself but knows which top-level domain server to consult next. That top-level domain server, in turn, points to the authoritative server responsible for the specific domain being queried. The authoritative server holds the actual, definitive record and returns the real IP address, which is then cached by the intermediate resolvers for a duration defined by the record's time-to-live value, so that subsequent lookups can be resolved more quickly.
 
 There's an important distinction between a recursive resolver and an authoritative server: a recursive resolver is the intermediary that performs the work of tracking down an answer on behalf of a requesting device, while an authoritative server is the actual source of truth, holding the official records that a domain's owner has configured.
+
+## Practical Example — Querying DNS Records Directly
+
+```bash
+$ dig google.com A +short
+142.250.74.46
+
+$ dig google.com MX +short
+10 smtp.google.com.
+
+$ dig +trace google.com | tail -5
+google.com.    300  IN  A  142.250.74.46
+;; Received 60 bytes from 216.239.34.10#53(216.239.34.10) in 12 ms
+```
+
+The `+trace` flag shows the full resolution chain from root servers down to the authoritative answer, rather than relying on a cached result — useful when verifying that DNS records are actually configured correctly at the source, rather than just checking what's currently cached somewhere along the chain.

@@ -41,3 +41,16 @@ A packet operates at Layer 3 and contains the sender's and receiver's IP address
 Data is deliberately split into smaller units rather than transmitted as a single whole, primarily to reduce the risk of any single large transfer overwhelming network capacity, and to allow data to be rerouted or retransmitted in smaller, more manageable pieces if something goes wrong along the way.
 
 Several header fields within an IP packet carry particular significance. The Time to Live field acts as an expiration counter, ensuring that a packet which fails to reach its destination within a reasonable number of hops is discarded rather than circulating indefinitely. The checksum field allows the receiving system to verify that the data wasn't corrupted in transit. The source and destination address fields identify, respectively, where the packet originated and where it is headed, which is what allows a response to be routed back correctly.
+
+## Practical Example — Tracing the Path a Packet Takes
+
+```bash
+$ traceroute google.com
+traceroute to google.com (142.250.74.46), 30 hops max, 60 byte packets
+ 1  192.168.1.254 (192.168.1.254)  1.021 ms  0.987 ms  0.954 ms
+ 2  10.10.0.1 (10.10.0.1)  8.442 ms  8.201 ms  8.115 ms
+ 3  72.14.215.85 (72.14.215.85)  14.332 ms  14.290 ms  14.108 ms
+ 4  142.250.74.46 (142.250.74.46)  15.774 ms  15.602 ms  15.490 ms
+```
+
+Each numbered line represents one router hop the packet passed through on its way to the destination, with three round-trip time samples per hop. A hop that suddenly times out (`* * *`) or shows unusually high latency compared to neighboring hops can indicate a network issue or a misconfigured/overloaded device along the path.

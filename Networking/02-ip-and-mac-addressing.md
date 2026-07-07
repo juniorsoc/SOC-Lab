@@ -29,3 +29,23 @@ IP addresses can be assigned manually (statically) or automatically through a DH
 Subnetting is the practice of dividing one larger network into smaller, more manageable segments. Every subnet contains three key address types: a network address, which identifies the subnet as a whole rather than any individual device; a host address, which identifies a specific device within that subnet; and a default gateway, which is the router responsible for forwarding traffic to other networks.
 
 Subnetting serves several purposes. It improves efficiency by reducing the volume of broadcast traffic confined within each smaller segment. It improves security by isolating networks from one another, limiting the blast radius of any compromise. And it improves administrative control by making it clearer which devices belong to which logical grouping.
+
+## Practical Example — Checking Connectivity and the ARP Cache
+
+```bash
+$ ping -c 4 192.168.1.254
+PING 192.168.1.254 (192.168.1.254) 56(84) bytes of data.
+64 bytes from 192.168.1.254: icmp_seq=1 ttl=64 time=1.02 ms
+64 bytes from 192.168.1.254: icmp_seq=2 ttl=64 time=0.98 ms
+64 bytes from 192.168.1.254: icmp_seq=3 ttl=64 time=1.10 ms
+64 bytes from 192.168.1.254: icmp_seq=4 ttl=64 time=1.01 ms
+
+--- 192.168.1.254 ping statistics ---
+4 packets transmitted, 4 received, 0% packet loss, time 3005ms
+rtt min/avg/max/mdev = 0.980/1.027/1.100/0.045 ms
+
+$ arp -a
+gateway (192.168.1.254) at aa:bb:cc:77:88:99 [ether] on eth0
+```
+
+Zero packet loss and consistent round-trip times confirm a healthy path to the gateway. The `arp -a` output confirms which MAC address currently answers for that IP — if this value suddenly changes without explanation, it can indicate ARP spoofing in progress.
