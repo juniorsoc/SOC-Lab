@@ -1,133 +1,27 @@
 # TCP/IP Basics for SOC Analyst
 
-## What is TCP/IP?
+Communication model computers use to exchange data over networks. SOC analysts need this to understand network traffic, attacks, suspicious connections, and firewall logs.
 
-TCP/IP is a communication model used by computers to exchange data over networks.
+## TCP/IP layers
 
-SOC analysts need TCP/IP knowledge to understand:
-- network traffic
-- attacks
-- suspicious connections
-- firewall logs
+| Layer | Responsible for | Protocols/examples |
+|-------|-------------------|----------------------|
+| Application | User-facing services | HTTP/HTTPS, DNS, SSH, FTP, SMTP |
+| Transport | How data moves (TCP/UDP) | TCP (handshake: SYN → SYN-ACK → ACK), UDP (fast, no connection — DNS, streaming, VoIP) |
+| Internet | Addressing + routing | IP, ICMP |
+| Network Access | Physical transmission | Ethernet, MAC addresses |
 
----
+## Key concepts
 
-# TCP/IP Layers
+- **IP address** — identifies a device on a network (e.g. `192.168.1.50`)
+- **Port** — identifies a service (22 SSH, 80 HTTP, 443 HTTPS, 53 DNS, 3389 RDP)
+- **Routing** — routers use routing tables to decide where packets go
 
-## 1. Application Layer
+## Useful Linux commands
 
-Protocols:
-- HTTP/HTTPS
-- DNS
-- SSH
-- FTP
-- SMTP
-
-Example:
-User opens a website using HTTPS.
-
----
-
-## 2. Transport Layer
-
-Main protocols:
-
-### TCP
-- connection-oriented
-- reliable communication
-- uses handshake
-
-TCP three-way handshake:
-
-1. SYN
-2. SYN-ACK
-3. ACK
-
-
-### UDP
-- faster
-- no connection
-- used for DNS, streaming, VoIP
-
----
-
-## 3. Internet Layer
-
-Responsible for addressing and routing.
-
-Protocols:
-- IP
-- ICMP
-
-Example:
-192.168.1.10 communicates with another host.
-
----
-
-## 4. Network Access Layer
-
-Responsible for:
-- Ethernet
-- MAC addresses
-- physical transmission
-
----
-
-# Important SOC Concepts
-
-## IP Address
-
-Identifies a device on a network.
-
-Example:
-
-192.168.1.50
-
----
-
-## Port
-
-Identifies a service.
-
-Common ports:
-
-22 - SSH
-
-80 - HTTP
-
-443 - HTTPS
-
-53 - DNS
-
-3389 - RDP
-
----
-
-## Routing
-
-Routing decides where packets go.
-
-Routers use routing tables to forward traffic.
-
----
-
-## Useful Linux Commands
-
-Show IP address:
-
-ip addr
-
-
-Show routes:
-
-ip route
-
-
-Show active connections:
-
-ss -tulpn
-
-
-Test connectivity:
-
-ping google.com
+| Command | Shows |
+|---------|-------|
+| `ip addr` | IP address |
+| `ip route` | Routing table |
+| `ss -tulpn` | Active connections |
+| `ping google.com` | Connectivity test |

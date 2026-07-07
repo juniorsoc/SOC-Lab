@@ -1,29 +1,21 @@
 # DNS — Domain Name System
 
-## DNS Record Types
+## Record types
 
-DNS relies on several record types to store different kinds of information about a domain. An A record maps a domain name to an IPv4 address, while an AAAA record performs the same mapping for IPv6. A CNAME record creates an alias, pointing one domain name to another. An MX record specifies which mail server is responsible for handling email for a domain. A TXT record is commonly used for domain verification and anti-spam mechanisms such as SPF and DKIM.
+| Record | Maps to |
+|--------|---------|
+| A | Domain → IPv4 |
+| AAAA | Domain → IPv6 |
+| CNAME | Domain → another domain (alias) |
+| MX | Mail server responsible for the domain |
+| TXT | Verification / anti-spam (SPF, DKIM) |
 
-## How DNS Resolution Works
+## Resolution flow
 
-Resolving a domain name into an IP address follows a chain of lookups that only goes as far as necessary to find an answer. A device first checks whether it already has the answer cached locally from a previous lookup; if so, resolution ends immediately. If not, the query is passed to the ISP's DNS resolver, which maintains its own cache and either returns a cached answer or continues the search further.
+1. Check local cache — if cached, done.
+2. Ask ISP resolver — if cached there, done.
+3. Ask a root DNS server — points to the right TLD server.
+4. TLD server points to the authoritative server for that domain.
+5. Authoritative server returns the real record — cached by resolvers along the way per the record's TTL.
 
-If neither the local device nor the ISP's resolver has a cached answer, the query proceeds to a root DNS server, which doesn't hold the final answer itself but knows which top-level domain server to consult next. That top-level domain server, in turn, points to the authoritative server responsible for the specific domain being queried. The authoritative server holds the actual, definitive record and returns the real IP address, which is then cached by the intermediate resolvers for a duration defined by the record's time-to-live value, so that subsequent lookups can be resolved more quickly.
-
-There's an important distinction between a recursive resolver and an authoritative server: a recursive resolver is the intermediary that performs the work of tracking down an answer on behalf of a requesting device, while an authoritative server is the actual source of truth, holding the official records that a domain's owner has configured.
-
-## Practical Example — Querying DNS Records Directly
-
-```bash
-$ dig google.com A +short
-142.250.74.46
-
-$ dig google.com MX +short
-10 smtp.google.com.
-
-$ dig +trace google.com | tail -5
-google.com.    300  IN  A  142.250.74.46
-;; Received 60 bytes from 216.239.34.10#53(216.239.34.10) in 12 ms
-```
-
-The `+trace` flag shows the full resolution chain from root servers down to the authoritative answer, rather than relying on a cached result — useful when verifying that DNS records are actually configured correctly at the source, rather than just checking what's currently cached somewhere along the chain.
+**Recursive resolver** = does the lookup work on your behalf. **Authoritative server** = actual source of truth for the domain's records.

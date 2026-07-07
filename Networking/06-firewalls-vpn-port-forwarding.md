@@ -1,38 +1,32 @@
-# Firewalls, Port Forwarding, and VPNs
+# Firewalls, Port Forwarding, VPNs
 
 ## Firewalls
 
-A firewall is a network device responsible for deciding what traffic is permitted to enter or leave a network. It typically operates at Layer 3, evaluating source and destination IP addresses, and at Layer 4, evaluating port numbers and the transport protocol in use (TCP or UDP). To make these decisions, a firewall inspects the packets passing through it and compares them against a configured set of rules.
+Decides what traffic can enter/leave a network. Operates at Layer 3 (source/destination IP) and Layer 4 (ports, TCP/UDP), inspecting packets against configured rules.
 
-There are two broad categories of firewalls. A stateful firewall tracks the full context of an entire connection rather than evaluating packets in isolation, which makes it considerably more intelligent but also more resource-intensive — it can recognize when a device is behaving suspiciously over the course of a session and respond accordingly, including blocking that device outright. A stateless firewall, by contrast, evaluates each packet individually against a fixed rule set without any awareness of connection history. This makes it lighter on system resources but less capable of detecting patterns that only emerge across multiple packets, and packets that don't clearly violate a rule may simply be allowed through by default. Stateless firewalls tend to hold up better under high-volume conditions such as a distributed denial-of-service attack, precisely because they don't need to track per-connection state.
+| | Stateful | Stateless |
+|---|----------|-----------|
+| Tracks | Full connection context | Each packet individually |
+| Smarter about | Suspicious behavior over a session | — |
+| Cost | More resource-intensive | Lighter |
+| Holds up better under | Normal load | High volume (e.g. DDoS) |
 
-Firewalls can be implemented as dedicated hardware appliances, which is common in larger organizations, or as software running on a general-purpose system. In practice, firewall implementations are often grouped into several broad categories, though the stateful/stateless distinction remains the most fundamental one to understand.
+Can be dedicated hardware or software. Stateful vs stateless is the key distinction to know.
 
-## Port Forwarding
+## Port forwarding
 
-Port forwarding is what makes it possible to expose a service hosted on a local, private network to the wider internet. Without it, a service running on an internal device is only reachable from within that local network, since its private IP address has no meaning outside of it.
+Exposes a service on a private/internal network to the internet. Router maps incoming traffic on a public port → a specific internal device + port. Internal private IP stays hidden from outside.
 
-Port forwarding works by configuring a router to map incoming traffic on a specific port of its public IP address to a specific internal device and port. Traffic arriving at the router's public address is forwarded internally to the correct device, while the internal, private IP address of that device remains invisible to anyone connecting from outside.
+Different from a firewall: port forwarding opens the pathway, firewall decides if traffic is allowed through it. Usually work together, configured on the router.
 
-It's worth distinguishing port forwarding from a firewall's function: port forwarding is what opens a specific pathway for traffic to reach an internal service in the first place, while a firewall separately governs whether that traffic is actually permitted through. The two mechanisms typically work together but serve distinct purposes, and port forwarding is generally configured directly on the router itself.
+## VPN
 
-## VPN — Virtual Private Network
+Encrypted tunnel between devices over the internet — makes separate networks behave like one private network.
 
-A VPN establishes an encrypted tunnel between devices communicating over the internet, effectively allowing them to behave as though they were connected to the same private network, even when they are physically located on entirely separate networks.
+Uses: connect distributed offices to shared internal resources, encrypt traffic on untrusted/public networks, hide browsing from an ISP (only holds if the VPN provider itself doesn't log traffic).
 
-VPNs serve several distinct purposes. They allow geographically distributed offices to access the same internal company resources as though everyone were on a single local network. They provide privacy by encrypting traffic so that only the sender and intended recipient can read it, which is particularly valuable on untrusted or public networks. And they can provide a degree of anonymity by hiding browsing activity from an internet service provider — though this protection only holds if the VPN provider itself doesn't log the traffic passing through it.
-
-Several underlying technologies are commonly used to build VPN connections. PPP provides the foundational layer of authentication and encryption but cannot, on its own, route traffic beyond a local link. PPTP extends PPP to support routing across the wider internet and is relatively simple to configure, though it relies on encryption that is considered weak by modern standards. IPSec encrypts traffic on top of the existing IP protocol, offering considerably stronger encryption at the cost of more complex configuration.
-
-## Practical Example — Reviewing Firewall Rules
-
-```bash
-$ sudo iptables -L -n -v
-Chain INPUT (policy DROP)
-target   prot opt source           destination         
-ACCEPT   tcp  --  0.0.0.0/0        0.0.0.0/0    tcp dpt:22
-ACCEPT   tcp  --  0.0.0.0/0        0.0.0.0/0    tcp dpt:443
-DROP     tcp  --  203.0.113.44     0.0.0.0/0    tcp dpt:22
-```
-
-This ruleset shows a default-deny policy (`DROP`) with explicit allow rules for SSH (22) and HTTPS (443), plus a specific block rule against one IP attempting SSH — likely added after that IP was observed brute-forcing login attempts. Reading rulesets like this top-to-bottom, since firewall rules are evaluated in order, is a core SOC skill when auditing whether a system is configured as intended.
+| Protocol | Notes |
+|----------|-------|
+| PPP | Base auth/encryption layer, can't route beyond a local link alone |
+| PPTP | Extends PPP for internet routing, simple, weak encryption by modern standards |
+| IPSec | Encrypts on top of IP, stronger encryption, more complex config |

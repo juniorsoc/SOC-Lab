@@ -1,74 +1,29 @@
 # SIEM Basics
 
-## What is SIEM?
+**SIEM** (Security Information and Event Management) — collects, analyzes, and monitors logs from multiple sources so a SOC analyst can detect and investigate suspicious activity.
 
-SIEM (Security Information and Event Management) is a security system used to collect, analyze and monitor logs from different sources.
+## How it works
 
-SOC analysts use SIEM to detect suspicious activity and investigate security incidents.
+| Step | What happens |
+|------|--------------|
+| Collect | Logs come in from servers, endpoints, firewalls, apps, network devices |
+| Normalize | Different log formats get converted to a common format |
+| Analyze | SIEM searches for suspicious patterns |
+| Alert | A triggered rule generates an alert for analysts |
 
+## Key terms
 
-## How SIEM works
+| Term | Meaning |
+|------|---------|
+| Event | A single recorded activity (e.g. a login attempt) |
+| Alert | Notification about suspicious activity |
+| Correlation rule | Combines multiple events to detect a threat |
+| False positive | Looks suspicious but isn't a real attack |
 
-1. Collect logs
+## Common tools
 
-SIEM receives data from:
-- servers
-- endpoints
-- firewalls
-- applications
-- network devices
+Splunk, Microsoft Sentinel, IBM QRadar, Elastic SIEM, Wazuh.
 
+## SOC analyst workflow
 
-2. Normalize data
-
-Different log formats are converted into a common format.
-
-
-3. Analyze events
-
-SIEM searches for suspicious patterns.
-
-
-4. Generate alerts
-
-When a rule is triggered, SIEM creates an alert for analysts.
-
-
-## Important SIEM Terms
-
-Event:
-A single recorded activity.
-
-Example:
-User login attempt.
-
-
-Alert:
-A notification about suspicious activity.
-
-
-Correlation rule:
-A rule that combines multiple events to detect threats.
-
-
-False Positive:
-An alert that looks suspicious but is not a real attack.
-
-
-## Examples of SIEM Tools
-
-- Splunk
-- Microsoft Sentinel
-- IBM QRadar
-- Elastic SIEM
-- Wazuh
-
-
-## SOC Analyst Workflow
-
-1. Receive alert
-2. Check logs
-3. Investigate activity
-4. Decide severity
-5. Document findings
-6. Escalate if needed
+Receive alert → check logs → investigate → decide severity → document → escalate if needed.
