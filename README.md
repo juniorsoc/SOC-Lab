@@ -1,121 +1,48 @@
-# SOC-Lab
+# SOC Analyst Portfolio
 
-My cybersecurity learning portfolio focused on developing SOC Analyst skills.
+🎯 **Goal:** Junior SOC Analyst
+📅 **Journey:** 3 months in, self-taught, building hands-on experience daily
+🔗 **Currently working through:** TryHackMe SOC Level 1 · CompTIA Security+ (planned)
 
-This repository documents my learning process, security exercises and practical labs related to Security Operations Center (SOC) work.
+---
 
-## Skills & Learning Progress
+## What's in this repo
 
-## Networking
+| Folder | What it shows |
+|---|---|
+| [`SOC-Incidents/`](./SOC-Incidents) | Real incident write-ups: SSH brute-force detection, Ubuntu auth log analysis |
+| [`Home-SOC-Lab/`](./Home-SOC-Lab) | Building a triple-boot SOC lab (Windows 11 / Kali / Ubuntu) with Splunk + Suricata |
+| [`Incident-Response/`](./Incident-Response) | IR process notes and case documentation |
+| [`Notes/`](./Notes) | Structured notes: Networking, Linux, Windows, SIEM, Cloud Security |
+| [`TryHackMe-Writeups/`](./TryHackMe-Writeups) | Room write-ups from SOC Level 1 path |
+| [`Tools-Scripts/`](./Tools-Scripts) | Scripts for log parsing and automation |
 
-Currently learning and practicing:
+## Skills snapshot
 
-- TCP/IP fundamentals (basic understanding, practiced on TryHackMe)
-- Routing basics (introductory knowledge)
-- DNS fundamentals (practiced on TryHackMe)
-- Network protocols and ports
-- Basic network traffic analysis
+| Area | Level | Evidence |
+|---|---|---|
+| Networking (TCP/IP, DNS, OSI) | Foundational | [Notes/Networking](./Notes/Networking) |
+| Linux administration & log analysis | Foundational, hands-on | [Notes/Linux-Security](./Notes/Linux-Security) |
+| Windows Event Logs | Foundational | [Notes/Windows](./Notes/Windows) |
+| SIEM concepts & alert triage | Learning, applying | [SOC-Incidents/](./SOC-Incidents) |
+| Incident investigation | Applied on real lab data | [SOC-Incidents/ssh-bruteforce.md](./SOC-Incidents/ssh-bruteforce.md) |
 
+## Home Lab
 
-## Operating Systems
+Building a home SOC environment from scratch:
+- Triple-boot: Windows 11 + Kali Linux + Ubuntu
+- SIEM: Splunk (Ubuntu host)
+- IDS: Suricata
+- Tools: Wireshark, Nmap, Wazuh (planned)
 
-### Linux
+→ Full setup process documented in [`Home-SOC-Lab/`](./Home-SOC-Lab)
 
-Learning:
+## Next milestones
 
-- Linux administration and security basics
-- Command line usage
-- System monitoring
-- Log locations and analysis
+- [ ] Finish triple-boot + Splunk/Suricata home lab
+- [ ] Complete TryHackMe SOC Level 1
+- [ ] CompTIA Security+
+- [ ] Apply for Junior SOC Analyst roles
 
-
-### Windows
-
-Learning:
-
-- Windows fundamentals
-- Windows security concepts
-- Windows Event Logs
-
-
-## SIEM
-
-Currently learning:
-
-- What SIEM systems are
-- How security alerts work
-- How SOC analysts investigate events
-- Basic alert analysis workflow
-
-Practical SIEM experience:
-- Planned
-
-
-## Log Analysis
-
-Basic experience with:
-
-- Reading system logs
-- Understanding authentication events
-- Searching for suspicious activity
-
-Continuing to improve log analysis skills through practical exercises.
-
-
-## Incident Response
-
-Currently learning:
-
-- Incident response process
-- Security incident documentation
-- Investigation methodology
-
-Practical incident response labs:
-- Planned
-
-
-## Home Lab Environment
-
-Operating Systems:
-
-- Ubuntu Linux
-- Kali Linux
-
-Tools:
-
-- Wireshark
-- Nmap
-- Git/GitHub
-- Wazuh (planned)
-
-
-## Learning Platforms & Practice
-
-- TryHackMe
-- Ubuntu Home Lab
-- Kali Linux
-- GitHub documentation
-
-
-## Planned Practical Labs
-
-The next steps in my learning path:
-
-- Wazuh SIEM home lab
-- Linux log investigation exercises
-- Windows Event Log analysis
-- Network traffic analysis with Wireshark
-- Incident response case studies
-
-
-## Current Goal
-
-Build the knowledge and practical skills required for a Junior SOC Analyst position.
-
-Focus areas:
-
-- Understanding security events
-- Learning log analysis
-- Practicing alert investigation
-- Improving networking and system security knowledge
-- Building hands-on cybersecurity experience
+---
+*This repo is updated as I progress — not a finished product, but an honest record of hands-on learning.*
