@@ -42,7 +42,7 @@ Both port 80 and port 443 serve the same router login page — meaning the admin
 Two distinct traffic patterns emerged, depending on port state:
 
 ### Pattern A — Open port (e.g. 443, 139, 80)
-92.168.1.14 → 192.168.1.1   [SYN]
+192.168.1.14 → 192.168.1.1   [SYN]
 192.168.1.1  → 192.168.1.14  [SYN, ACK]
 192.168.1.14 → 192.168.1.1   [ACK]
 192.168.1.14 → 192.168.1.1   [RST, ACK]
