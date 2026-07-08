@@ -72,4 +72,4 @@ Wireshark resolves the OUI (first 3 bytes of the MAC) to the manufacturer, which
 
 ## Screenshot
 
-*(insert `Zrzut_ekranu_z_2026-07-08_21-08-12.png` here — filtered capture showing SYN/SYN-ACK/RST-ACK sequences and TCP retransmissions)*
+![nmap scan captured in Wireshark](nmap-wireshark-capture.png)
