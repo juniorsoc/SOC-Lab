@@ -24,7 +24,7 @@ Simulate a small SOC environment end-to-end: generate malicious traffic, detect 
 | Stage | Status |
 |---|---|
 | Kali install (dual-boot) | ✅ Done |
-| Ubuntu install (triple-boot) | 🔄 In progress |
+| Ubuntu install (triple-boot) | ✅ Done |
 | Splunk on Ubuntu | ⏳ Next |
 | Suricata on Ubuntu | ⏳ Next |
 | First detected incident (end-to-end test) | ⏳ Next |
