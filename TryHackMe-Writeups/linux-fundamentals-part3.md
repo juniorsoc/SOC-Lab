@@ -1,273 +1,211 @@
-# TryHackMe — Linux Fundamentals: Part 3
+TryHackMe — Linux Fundamentals Part 3 (Writeup)
+Status: ✅ Complete
 
-Writeup z trzeciej części serii Linux Fundamentals na TryHackMe. Notatki obejmują pobieranie/serwowanie plików, zarządzanie procesami, edytory tekstu, crontab oraz repozytoria pakietów.
+Room Overview
+This room continues from Part 2 and covers moving files around (wget, scp, hosting your own web server with Python), how processes work in Linux, scheduling tasks with cron, adding software repos, and finally where to find log files.
 
----
+Task: Downloading Files with Wget
+wget lets you download a file straight from a URL, same as if you opened it in a browser. Basic syntax:
 
-## Task 1-2 — Pobieranie i serwowanie plików
-
-### `wget` — pobieranie plików przez HTTP
-
-```bash
 wget https://assets.tryhackme.com/additional/linux-fundamentals/part3/myfile.txt
-```
 
-Pobiera plik z podanego adresu URL, tak jakbyśmy otwierali go w przeglądarce.
+Nothing fancy, you just give it the link and it grabs the file into your current folder.
 
-### `scp` — bezpieczne kopiowanie plików (SSH)
+Task: Transferring Files with SCP
+scp (secure copy) moves files between two machines over SSH, so it's encrypted, unlike plain cp which only works locally.
 
-Format: `scp ŹRÓDŁO CEL`
+It works as SOURCE and DESTINATION, same logic as cp but with a machine address in front.
 
-**Wysyłanie pliku na zdalny host:**
-```bash
+Copy a file from my machine to a remote machine:
+
 scp important.txt ubuntu@192.168.1.30:/home/ubuntu/transferred.txt
-```
 
-**Pobieranie pliku ze zdalnego hosta:**
-```bash
+Copy a file from a remote machine down to mine (without logging in first):
+
 scp ubuntu@192.168.1.30:/home/ubuntu/documents.txt notes.txt
-```
 
-`scp` korzysta z protokołu SSH, więc transfer jest szyfrowany i uwierzytelniony — w przeciwieństwie do zwykłego `cp`, które działa tylko lokalnie.
+Key thing I had to remember: the remote side always needs user@ip:/path, doesn't matter if it's the source or the destination.
 
-### Serwowanie plików — Python `http.server`
+Task: Serving Files from My Own Machine
+Turns out Ubuntu already comes with Python3, and Python has a built-in module called http.server that turns your current folder into a mini web server. Good for quickly sending a file to another machine on the network without setting up anything else.
 
-Ubuntu ma domyślnie zainstalowany Python3, który udostępnia prosty moduł do serwowania plików z bieżącego katalogu:
+Start it in the folder you want to share from:
 
-```bash
 python3 -m http.server
-```
-```
+
+By default it runs on port 8000. Output looks like this:
+
 Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
-```
 
-Serwer działa w bieżącym terminalu — trzeba **otworzyć drugi terminal**, żeby pobrać plik za pomocą `wget`:
+Then from another terminal (has to be a new one, the first one is stuck running the server) you can pull the file with wget, just remember to add the port:
 
-```bash
 wget http://10.113.149.98:8000/myfile
-```
 
-Wada tego rozwiązania: brak indeksowania katalogu — trzeba znać dokładną nazwę pliku. Alternatywa z większą funkcjonalnością: **Updog**.
+Downloaded the flag file this way:
 
-**Flaga:**
-```bash
 wget http://10.113.149.98:8000/.flag.txt
-```
-> `THM{WGET_WEBSERVER}`
 
----
+Flag Captured
 
-## Task 3 — Procesy
+THM{WGET_WEBSERVER}
 
-Procesy to uruchomione programy zarządzane przez kernel. Każdy proces ma **PID** (Process ID), który rośnie w kolejności uruchamiania — proces uruchomiony jako 60. w kolejności ma PID 60.
+Note to self: this method has no way to browse/list files, you need to know the exact filename. Room mentions a tool called Updog as a nicer alternative, might check that out later.
 
-### Podgląd procesów
+Task: Viewing Processes
+Every running program is a process, and each one gets a PID (process ID). PIDs just go up in order — first process to start gets a lower number, next one gets the next number, and so on.
 
-```bash
-ps          # procesy w bieżącej sesji
-ps aux      # wszystkie procesy w systemie (też inne użytkowniki, procesy systemowe)
-top         # widok procesów w czasie rzeczywistym
-```
+ps — shows processes running under my own session
+ps aux — shows everything, including other users' processes and system processes (root, etc.)
+top — same idea as ps aux but live/updating, refreshes automatically
 
-### Zarządzanie procesami — sygnały
+Quick logic check I had to think through: if the last process had PID 300, the next one that starts will be 301 (just +1).
 
-| Sygnał | Działanie |
-|---|---|
-| `SIGTERM` | zabija proces, ale pozwala mu wcześniej "posprzątać" |
-| `SIGKILL` | zabija proces natychmiast, bez sprzątania |
-| `SIGSTOP` | zatrzymuje/zawiesza proces |
+Task: Killing / Managing Processes
+kill <PID> sends a signal to stop a process. Different signals behave differently:
 
-```bash
-kill 1337          # wysyła domyślnie SIGTERM do PID 1337
-```
+Signal	What it does
+SIGTERM	Kill the process but let it clean up first
+SIGKILL	Kill it immediately, no cleanup
+SIGSTOP	Pause/suspend the process
 
-### Jak startują procesy — namespace'y i PID 0
+So if I want to be "nice" about it and kill something cleanly, that's SIGTERM.
 
-System dzieli zasoby (CPU, RAM) między procesy za pomocą **namespace'ów** — izolują one procesy od siebie nawzajem (procesy widzą tylko te w tym samym namespace).
+Task: How Processes Actually Start
+This part took a bit to wrap my head around. The OS uses namespaces to split up the machine's resources (CPU, RAM, etc.) between processes, kind of like giving everything its own slice so it doesn't just eat all the resources.
 
-Proces o **PID 0** to proces startujący przy uruchomieniu systemu — na Ubuntu jest to `systemd`. Wszystkie inne programy startują jako **procesy potomne (child processes)** systemd.
+PID 0 is the very first process that starts when the system boots — on Ubuntu that's systemd. Every other program you start after that becomes a child process of systemd, meaning systemd is in charge of it even though it runs as its own separate process.
 
-### Uruchamianie usług na starcie systemu — `systemctl`
+Task: Starting Services on Boot with systemctl
+systemctl is the command used to talk to systemd. Format is:
 
-Format: `systemctl [opcja] [usługa]`
+systemctl [option] [service]
 
-| Opcja | Znaczenie |
-|---|---|
-| `start` | uruchamia usługę teraz |
-| `stop` | zatrzymuje usługę teraz |
-| `enable` | usługa wystartuje automatycznie przy każdym boocie |
-| `disable` | usługa nie wystartuje automatycznie przy boocie |
-| `status` | pokazuje aktualny stan usługi |
+The 5 options covered:
 
-```bash
-systemctl start apache2      # uruchamia apache2 od razu
-systemctl enable apache2     # sprawia, że apache2 startuje przy boocie
-```
+start
+stop
+enable
+disable
+status
 
-### Backgrounding / foregrounding procesów
+So to turn on a service:
 
-**Operator `&`** — uruchamia komendę w tle, zwracając od razu PID zamiast oczekiwać na wynik:
-```bash
-echo "Hi THM" &
-```
+systemctl start apache2
 
-**`Ctrl + Z`** — zawiesza (suspenduje) proces działający na pierwszym planie, zwalniając terminal.
+To make sure it also comes on automatically every time the machine boots:
 
-**`fg`** — przywraca zawieszony/tłowy proces z powrotem na pierwszy plan, żeby móc z nim wchodzić w interakcję.
+systemctl enable apache2
 
-**`jobs`** — lista procesów w tle/zawieszonych w bieżącej sesji.
+Answers I worked out:
 
-### Pytania i odpowiedzi
+Stop a service called "myservice":
 
-| Pytanie | Odpowiedź |
-|---|---|
-| Poprzedni PID to 300, jaki będzie PID nowego procesu? | `301` |
-| Jaki sygnał wysłać, żeby "czysto" zabić proces? | `SIGTERM` |
-| Flaga po zlokalizowaniu procesu na deployed instance | `THM{PROCESSES}` |
-| Komenda zatrzymująca usługę "myservice" | `systemctl stop myservice` |
-| Komenda uruchamiająca usługę na boot-cie | `systemctl enable myservice` |
-| Komenda przywracająca proces na pierwszy plan | `fg` |
+systemctl stop myservice
 
----
+Start "myservice" automatically on boot:
 
-## Task 4-5 — Edytory tekstu (Nano/VIM) i Crontab
+systemctl enable myservice
 
-### Nano
+Task: Foreground vs Background Processes
+Normally when you run a command it runs in the foreground, meaning it takes over your terminal until it's done (like echo, you see the output straight away).
 
-```bash
-nano nazwa_pliku
-```
+You can push something to the background two ways:
 
-Podstawowe skróty (Ctrl = `^`):
-- `^X` — wyjście
-- `^O` — zapis (Write Out)
-- `^W` — szukaj (Where Is)
-- `^K` / `^U` — wytnij / wklej
+Add & at the end of the command — instead of getting the output back, you just get the process ID and your terminal is free again.
+Ctrl + Z while something is already running — this suspends/pauses it instead of killing it, and gives the terminal back.
 
-### VIM
+To bring a backgrounded process back into focus:
 
-Bardziej zaawansowany edytor: konfigurowalne skróty, podświetlanie składni, dostępny praktycznie na każdym terminalu (w przeciwieństwie do nano, które nie zawsze jest zainstalowane). TryHackMe ma dedykowany pokój: [VIM room](https://tryhackme.com/room/toolboxvim), ściągawka: [vim.rtorr.com](https://vim.rtorr.com/).
-
-### Crontab — planowanie zadań
-
-Cron to proces uruchamiany przy boocie, odpowiedzialny za wykonywanie zaplanowanych zadań (cron jobs) na podstawie pliku **crontab**.
-
-Format crontab (6 pól):
-
-| Pole | Znaczenie |
-|---|---|
-| MIN | minuta |
-| HOUR | godzina |
-| DOM | dzień miesiąca |
-| MON | miesiąc |
-| DOW | dzień tygodnia |
-| CMD | komenda do wykonania |
-
-Przykład — backup katalogu co 12 godzin:
-```
-0 */12 * * * cp -R /home/cmnatic/Documents /var/backups/
-```
-
-Gwiazdka (`*`) = wildcard, oznacza "dowolna wartość" dla danego pola.
-
-Edycja crontaba:
-```bash
-crontab -e
-```
-
-**Odpowiedź:** crontab na deployed instance uruchamia się przy `@reboot`.
-
----
-
-## Task 7 — Pakiety i repozytoria (APT)
-
-### Czym jest repozytorium APT?
-
-To **serwer z gotowym, skompilowanym oprogramowaniem** (pliki `.deb`), skąd `apt` pobiera programy — to **nie to samo co repozytorium Git/GitHub**, które służy do przechowywania i wersjonowania kodu źródłowego. Analogia: repo APT ≈ sklep z aplikacjami (jak App Store), repo Git ≈ miejsce pracy nad kodem.
-
-Podobny koncept na macOS to **Homebrew (`brew`)** — inny menedżer pakietów, inna platforma, ta sama filozofia.
-
-### Zarządzanie repozytoriami
-
-Dodanie repozytorium (przykład: Sublime Text):
-
-1. Dodaj i zaufaj kluczowi GPG (potwierdza integralność/pochodzenie oprogramowania):
-```bash
-wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
-```
-
-2. Utwórz osobny plik dla repozytorium w `/etc/apt/sources.list.d/` (np. `sublime-text.list`) i wpisz w nim adres repozytorium.
-
-3. Zaktualizuj listę pakietów:
-```bash
-sudo apt update
-```
-
-4. Zainstaluj oprogramowanie:
-```bash
-sudo apt install sublime-text
-```
-
-### Usuwanie repozytorium/pakietu
-
-```bash
-add-apt-repository --remove ppa:PPA_Name/ppa   # usunięcie repo
-apt remove sublime-text                         # usunięcie pakietu
-```
-
-> Uwaga: instancje TryHackMe nie mają dostępu do internetu — to zadanie jest wyłącznie teoretyczne.
-
----
-
-## Task 8 — Logi systemowe
-
-Logi znajdują się w katalogu `/var/log`. System automatycznie zarządza logami w procesie zwanym **rotacją (rotating)**.
-
-Przykładowe usługi z logami:
-- **Apache2** — serwer WWW (logi `access.log` i `error.log`)
-- **fail2ban** — monitoruje próby brute-force
-- **UFW** — firewall
-
-Logi serwera WWW zawierają informacje o każdym requeście — przydatne do diagnozowania wydajności lub śledzenia aktywności intruza.
-
-Typowa lokalizacja logów Apache:
-```bash
-cat /var/log/apache2/access.log
-```
-
----
-
-## Podsumowanie kluczowych komend
-
-```bash
-# Pobieranie / transfer plików
-wget <url>
-scp plik user@ip:/ścieżka/
-scp user@ip:/ścieżka/plik .
-python3 -m http.server
-
-# Procesy
-ps aux
-top
-kill <pid>
-systemctl [start|stop|enable|disable|status] <usługa>
-
-# Backgrounding
-komenda &
-Ctrl + Z
 fg
-jobs
 
-# Edytory
-nano plik
-vim plik
+Locating the running process on the deployed machine gave me this flag:
 
-# Crontab
+THM{PROCESSES}
+
+Task: Text Editors — Nano
+Up until now I was only writing to files using echo and > / >>, which is fine for one line but annoying for anything longer. nano is a simple terminal text editor.
+
+nano filename
+
+Opens (or creates) the file so you can just type normally, arrow keys to move around. All the shortcuts use Ctrl (shown as ^ in nano itself), e.g. Ctrl+X to exit, Ctrl+O to save.
+
+Room also mentions VIM as a more advanced option — more powerful, works basically everywhere even when nano isn't installed, but has a steeper learning curve. Leaving that for later, there's apparently a whole separate TryHackMe room just for VIM.
+
+Task: Scheduling Jobs with Cron
+cron is a process that starts at boot and runs jobs on a schedule. You manage those jobs through a crontab.
+
+A crontab line needs 6 fields:
+
+Field	Meaning
+MIN	Minute to run at
+HOUR	Hour to run at
+DOM	Day of month
+MON	Month
+DOW	Day of week
+CMD	The actual command to run
+
+Example — backing up a folder every 12 hours:
+
+0 */12 * * * cp -R /home/cmnatic/Documents /var/backups/
+
+Any field you don't care about, just put a * (wildcard) instead.
+
+To edit your own crontab:
+
 crontab -e
 
-# APT
+Checked the crontab on the deployed machine — it was set to run @reboot, meaning it just fires once every time the system boots up, instead of on a normal time schedule.
+
+Task: Packages & Repositories
+When someone writes a program for Linux, it usually gets published to an apt repository so people can install it with apt instead of manually downloading files.
+
+You can add extra (community/3rd-party) repos on top of the default ones with add-apt-repository, or by adding a source file manually. Before installing anything from a new repo, apt checks a GPG key to confirm the software is actually coming from who it says it's from — if the key doesn't match, it just won't install.
+
+Steps to manually add a repo (using Sublime Text as the example in the room):
+
+Add and trust the dev's GPG key:
+
+wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
+
+Create a file for the new repo under /etc/apt/sources.list.d/ (good practice: one file per repo).
+
+Refresh apt so it knows about the new repo:
+
 apt update
-apt install <pakiet>
-apt remove <pakiet>
-add-apt-repository <repo>
-```
+
+Install the software:
+
+apt install sublime-text
+
+To remove a repo + software again:
+
+add-apt-repository --remove ppa:PPA_Name/ppa
+apt remove sublime-text
+
+(This part of the room was read-only, TryHackMe VMs don't have internet access so you're not actually meant to run the add step on the deployed machine.)
+
+Task: Log Files
+/var/log is where most services keep their logs. Ubuntu automatically manages/rotates these so they don't just grow forever.
+
+Room pointed out 3 examples:
+
+Apache2 — web server logs (access log = who requested what, error log = what went wrong)
+fail2ban — logs brute-force attempts it detected
+ufw — firewall logs
+
+Went looking through the apache2 access log on the deployed machine to find which IP hit the site and what file they requested — good reminder that access logs are one of the first places to check when trying to figure out what a visitor (or attacker) actually did on a server.
+
+Commands Learned So Far (new in Part 3)
+wget, scp, python3 -m http.server, ps, ps aux, top, kill, systemctl, nano, crontab -e
+
+Key Takeaways
+scp always needs user@ip:/path on the remote side, whichever direction you're copying.
+python3 -m http.server is a super quick way to share a file, but you need to know the exact filename since there's no browsing/index.
+PIDs just increment — new process = last PID + 1.
+SIGTERM = clean kill, SIGKILL = force kill, SIGSTOP = pause.
+Everything traces back to PID 0 (systemd on Ubuntu) as the parent of all other processes.
+& and Ctrl+Z both background a process, fg brings it back.
+Crontab fields go MIN HOUR DOM MON DOW CMD, and @reboot is a special schedule that just means "run once at startup."
+/var/log is the first place to check for what a service (or an attacker) has been doing.
+
+Part of a Linux Fundamentals series on TryHackMe, documenting core CLI skills before moving into more advanced security-focused rooms.
